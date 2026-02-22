@@ -2,7 +2,13 @@ node_modules/
 .DS_Store
 .env
 dist/
+# frontend/dist IS committed — built by GitHub Actions CI
+!frontend/dist/
 coverage/
+
+# Docker data volume — SQLite lives here, never commit the database
+data/*
+!data/.gitkeep
 
 # Python virtualenv
 backend/.venv/
