@@ -1,6 +1,6 @@
-# Running locally (development)
+# Running locally & deploying
 
-## First-time setup
+## Mac — first-time setup
 
 ### Backend
 
@@ -20,7 +20,7 @@ npm install
 
 ---
 
-## Day-to-day: start and stop
+## Mac — day-to-day: start and stop
 
 From the repo root:
 
@@ -42,15 +42,22 @@ The **Memorable** URL works from any Bonjour-capable device on the same WiFi (Ma
 
 ---
 
-## Desktop launcher
+## Mac — desktop launcher
 
-`Savings Tracker.app` on the Desktop opens a Terminal, runs `start.sh`, and opens the app in your browser automatically.
+The `Savings Tracker.app` launcher opens a Terminal, runs `start.sh`, and opens the app in the browser automatically.
+
+To (re)build the `.app` from source after cloning on a new machine:
+
+```bash
+bash scripts/mac/build-launcher.sh
+```
+
+This compiles `scripts/mac/launcher.applescript` into `~/Applications/Savings Tracker.app`.
+Drag it to the Dock or keep it in the Desktop.
 
 ---
 
-## Manual start (dev / reload mode)
-
-If you want hot-reload on the backend:
+## Mac — manual start (dev / hot-reload mode)
 
 ```bash
 # Terminal 1 — backend
@@ -64,11 +71,49 @@ npm run dev -- --host --port 5173
 
 ---
 
+## Raspberry Pi / Docker deployment
+
+Requires: Docker + Docker Compose installed on the Pi (or any Linux host).
+
+### First time
+
+```bash
+git clone https://github.com/sneakybVer/budget-app.git
+cd budget-app
+docker compose up -d --build
+```
+
+- Frontend served by nginx on **port 80**
+- Backend API on **port 8000**
+- SQLite database persisted at `./data/budget.db` (outside containers, survives rebuilds)
+
+### Updating
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+The `frontend/dist/` is pre-built and committed to the repo by GitHub Actions — no Node.js needed on the Pi.
+
+### Private access from anywhere — Tailscale
+
+Install [Tailscale](https://tailscale.com) on the Pi and your other devices (free for personal use). The app is then accessible at the Pi's Tailscale IP (e.g. `http://100.x.x.x`) from your phone, laptop, etc. — end-to-end encrypted, no public exposure.
+
+---
+
+## CI — automatic frontend builds
+
+Pushing to `main` with changes in `frontend/src/` (or `vite.config.ts`, `package.json`, etc.) triggers the GitHub Actions workflow at `.github/workflows/build-frontend.yml`. It rebuilds `frontend/dist/` and commits it back automatically. The Pi just needs `git pull && docker compose up -d --build`.
+
+---
+
 ## Data
 
-- SQLite database lives at `budget-app/budget.db` — excluded from git.
+- **Mac dev:** SQLite at `budget-app/budget.db` — excluded from git.
+- **Docker:** SQLite at `budget-app/data/budget.db` — the `data/` directory is volume-mounted.
 - On first run, **no accounts or values are seeded** — add your own via the Settings page.
-- Back up `budget.db` manually if you want to preserve your data.
+- Back up `budget.db` manually to preserve your data.
 
 ---
 
@@ -94,6 +139,7 @@ npm test -- --run
 
 ```
 backend/
+  Dockerfile
   main.py             # App init, CORS, router registration
   seed.py             # First-run seed data
   schemas.py          # Pydantic request schemas
