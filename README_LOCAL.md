@@ -67,8 +67,26 @@ npm run dev -- --host --port 5173
 ## Data
 
 - SQLite database lives at `budget-app/budget.db` — excluded from git.
-- On first run, the backend seeds initial accounts and example records.
+- On first run, **no accounts or values are seeded** — add your own via the Settings page.
 - Back up `budget.db` manually if you want to preserve your data.
+
+---
+
+## Running the tests
+
+### Backend (pytest)
+
+```bash
+cd budget-app
+backend/.venv/bin/pytest backend/tests -q
+```
+
+### Frontend (Vitest)
+
+```bash
+cd budget-app/frontend
+npm test -- --run
+```
 
 ---
 

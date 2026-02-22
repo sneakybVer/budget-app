@@ -19,22 +19,35 @@ budget-app/
   start.sh              # Start backend + frontend
   stop.sh               # Stop both servers
   README_LOCAL.md       # First-time setup guide
+  pytest.ini            # Backend test configuration
   backend/
     main.py             # FastAPI app init, CORS, router registration
-    seed.py             # Startup seed data
+    seed.py             # Startup seed (AppSettings row only)
     schemas.py          # Pydantic request schemas
     db.py               # SQLite engine + session
     models.py           # SQLModel table definitions
     routers/
-      accounts.py       # /accounts CRUD
-      values.py         # /values CRUD
-      contributions.py  # /future_contributions CRUD + upsert
-      summary.py        # /summary + /settings
+      accounts.py       # GET/POST/PATCH/DELETE /accounts
+      values.py         # GET/POST/DELETE /values
+      contributions.py  # GET/POST/DELETE /future_contributions (+ upsert)
+      summary.py        # GET /summary · GET/PUT /settings
+    tests/
+      conftest.py       # In-memory SQLite fixture
+      test_accounts.py
+      test_values.py
+      test_contributions.py
+      test_summary.py
   frontend/
     src/
       pages/
         Progress.tsx    # Historical balances, bar/line chart toggle, entry form
         Forecast.tsx    # Projection chart, adjustable timeframe, what-if
+        Settings.tsx    # Account management, opening balances, savings target
+      utils.ts          # Shared pure functions (fmt, date helpers)
+      test/
+        utils.test.ts
+        Progress.test.tsx
+        Forecast.test.tsx
 ```
 
 ## Quick start
@@ -46,7 +59,7 @@ cd budget-app
 
 Open `http://localhost:5173` — or `http://MacBook-Pro.local:5173` from any device on your LAN.
 
-See [README_LOCAL.md](README_LOCAL.md) for first-time setup instructions.
+See [README_LOCAL.md](README_LOCAL.md) for first-time setup, test instructions, and data notes.
 
 ## GitHub
 
