@@ -1,0 +1,21 @@
+node_modules/
+.DS_Store
+.env
+dist/
+coverage/
+
+# Python virtualenv
+backend/.venv/
+**/__pycache__/
+*.pyc
+
+# SQLite database — contains personal financial data
+*.db
+*.db-shm
+*.db-wal
+
+# Local run logs
+*.log
+backend/server.log
+frontend/server.log
+.run/
